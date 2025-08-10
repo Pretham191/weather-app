@@ -342,7 +342,6 @@ const WeatherApp = () => {
       // Update state with real data
       setWeatherData(weatherData);
       setForecastData(forecastData);
-      setAirQualityData(airQualityData);
       setLoading(false);
       
     } catch (err) {
@@ -353,7 +352,6 @@ const WeatherApp = () => {
       setTimeout(() => {
         setWeatherData(mockWeatherData);
         setForecastData(mockForecastData);
-        setAirQualityData(mockAirQuality);
         setLoading(false);
       }, 1000);
     }
@@ -389,16 +387,7 @@ const WeatherApp = () => {
                 const forecastData = await forecastResponse.json();
                 setForecastData(forecastData);
               }
-              
-              // Get air quality for current location
-              const airQualityResponse = await fetch(
-                `${BASE_URL}/air_pollution?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`
-              );
-              
-              if (airQualityResponse.ok) {
-                const airQualityData = await airQualityResponse.json();
-                setAirQualityData(airQualityData);
-              }
+
             }
           } catch (error) {
             setError('Failed to get weather for your location');
@@ -520,52 +509,14 @@ const WeatherApp = () => {
       )}
     </div>
   );
-
-  const renderAirQualityView = () => (
-    <div>
-      {airQualityData && airQualityData.main && airQualityData.components && (
-        <div style={styles.weatherCard}>
-          <h3 style={styles.sectionTitle}>Air Quality Index</h3>
-          <div style={styles.airQualityGrid}>
-            <div style={styles.aqiCard}>
-              <div style={styles.aqiValue}>{airQualityData.main.aqi}</div>
-              <div style={styles.aqiLabel}>AQI - {getAQIStatus(airQualityData.main.aqi)}</div>
-            </div>
-            <div style={styles.aqiCard}>
-              <div style={styles.aqiValue}>{airQualityData.components.pm2_5?.toFixed(1) || 'N/A'}</div>
-              <div style={styles.aqiLabel}>PM2.5 (μg/m³)</div>
-            </div>
-            <div style={styles.aqiCard}>
-              <div style={styles.aqiValue}>{airQualityData.components.pm10?.toFixed(1) || 'N/A'}</div>
-              <div style={styles.aqiLabel}>PM10 (μg/m³)</div>
-            </div>
-            <div style={styles.aqiCard}>
-              <div style={styles.aqiValue}>{airQualityData.components.o3?.toFixed(1) || 'N/A'}</div>
-              <div style={styles.aqiLabel}>O₃ (μg/m³)</div>
-            </div>
-            <div style={styles.aqiCard}>
-              <div style={styles.aqiValue}>{airQualityData.components.no2?.toFixed(1) || 'N/A'}</div>
-              <div style={styles.aqiLabel}>NO₂ (μg/m³)</div>
-            </div>
-            <div style={styles.aqiCard}>
-              <div style={styles.aqiValue}>{airQualityData.components.co?.toFixed(1) || 'N/A'}</div>
-              <div style={styles.aqiLabel}>CO (μg/m³)</div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-
   return (
     <div style={styles.container}>
       <div style={styles.sidebar}>
-        <div style={styles.logo}>CLIMA</div>
+        <div style={styles.logo}>Weather</div>
         <nav style={styles.navMenu}>
           {[
             { id: 'forecast', label: 'Forecast' },
             { id: 'today', label: 'Today' },
-            { id: 'air-quality', label: 'Air Quality' }
           ].map((item) => (
             <div key={item.id} style={styles.navItem}>
               <button
@@ -608,7 +559,6 @@ const WeatherApp = () => {
           <>
             {currentView === 'today' && renderTodayView()}
             {currentView === 'forecast' && renderForecastView()}
-            {currentView === 'air-quality' && renderAirQualityView()}
           </>
         )}
       </div>
